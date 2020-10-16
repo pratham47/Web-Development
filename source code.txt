@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Strike:-</title>
+    <style media="screen">
+
+      body{
+        background-image: url("background/background1.jpg");
+      }
+      .game{
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+        font-family: cursive;
+      }
+      #canvas{
+        background-color: black;
+        border:2px solid yellow;
+        border-radius: 20px;
+      }
+
+      #ch{
+        color:white;
+        text-align: center;
+      }
+      .creator{
+        display: grid;
+        grid-template-columns: repeat(4,150px);
+        grid-gap:200px;
+        justify-content: center;
+        color:white;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="game">
+      <h1>Strike:-</h1>
+      <canvas id="canvas" width="600" height="600"></canvas>
+    </div>
+
+    <h1 id=ch>Creator:-</h1>
+    <div class="creator">
+        <h4>Yuvraj Singh(1910990532)</h4>
+        <h4>Pratham Sachdeva(1910990519)</h4>
+        <h4>Dev Bansal(1910990533)</h4>
+        <h4>Teezil Dhiman(1910990524)</h4>
+      </div>
+
+    <script type="text/javascript">
+      var canvas=document.getElementById('canvas');
+      var ctx=canvas.getContext("2d");
+      var x=canvas.height/2;
+      var y=canvas.width/2;
+      var ballRadius=20;
+      var dx=2,dy=2;
+      interval=setInterval(draw,10);
+      var paddleHeight=80;
+      var paddleWidth=20;
+      var paddle1Y=canvas.height/2; //for motion
+      var paddle2Y=canvas.height/2; //for motion
+      var paddle1X=100; //for motion
+      var paddle2X=canvas.width-100; //for motion
+      var score1=0,score2=0;
+      //Player Names
+      var player1=prompt("First player Name:-");
+      var player2=prompt("Second player Name:-");
+      var matchPoints=10;
+
+      function draw(){
+        clearScreen();
+        drawBall();
+        move();
+        bounce();
+        paddle1();
+        paddle2();
+        paddleMove();
+        wallPaddleStrike();
+        paddleStrike();
+        scoreCount();
+        drawScore1();
+        drawScore2();
+        gameOver();
+      }
+
+      function clearScreen(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+
+      function drawBall(){
+          ctx.beginPath();
+          ctx.arc(x,y,ballRadius,0,2*Math.PI);
+          ctx.fillStyle="blue";
+          ctx.fill();
+          ctx.closePath();
+      }
+
+      function move(){
+        x+=dx;
+        y+=dy;
+      }
+
+      function bounce(){
+        if(x+dx<0 || x+dx>canvas.width-ballRadius)
+          dx=-dx;
+        if(y+dy<0 || y+dy>canvas.height-ballRadius)
+          dy=-dy;
+      }
+
+      function paddle1(){
+        ctx.beginPath();
+        ctx.fillStyle="red";
+        ctx.fillRect(paddle1X,paddle1Y,paddleWidth,paddleHeight);
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      function paddle2(){
+        ctx.beginPath();
+        ctx.fillStyle="red";
+        ctx.fillRect(paddle2X,paddle2Y,paddleWidth,paddleHeight);
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      function paddleMove(){
+        if(player1up)
+          paddle1Y-=7;
+        if(player2up)
+          paddle2Y-=7;
+        if(player1down)
+          paddle1Y+=7;
+        if(player2down)
+          paddle2Y+=7;
+      }
+
+      function wallPaddleStrike(){
+        if(paddle1Y<0)
+          paddle1Y=0
+        if(paddle1Y+paddleHeight>canvas.height)
+          paddle1Y=canvas.height-paddleHeight;
+        if(paddle2Y<0)
+            paddle2Y=0
+        if(paddle2Y+paddleHeight>canvas.height)
+            paddle2Y=canvas.height-paddleHeight;
+      }
+
+      function paddleStrike(){
+        if(x>paddle1X && x<paddle1X+paddleWidth && y>paddle1Y && y<paddle1Y+paddleHeight){
+          dx=-dx;
+        }
+        if(x>paddle2X && x<paddle2X+paddleWidth && y>paddle2Y && y<paddle2Y+paddleHeight){
+          dx=-dx;
+        }
+      }
+
+      function drawScore1(){
+        ctx.font="20px Arial";
+        ctx.fillStyle="orange";
+        ctx.fillText("Score:-"+score1,8,20);
+      }
+
+      function drawScore2(){
+        ctx.font="20px Arial";
+        ctx.fillStyle="orange";
+        ctx.fillText("Score:-"+score2,canvas.width-90,20);
+      }
+
+      function scoreCount(){
+        if(x+dx==0)
+          score2++;
+        if(x+dx==canvas.width-40)
+          score1++;
+      }
+
+      function gameOver(){
+        if(score1==matchPoints){
+          alert(player1+" is the winner");
+          document.location.reload(); //to reload everything
+          clearInterval(interval);
+        }else if(score2==matchPoints){
+          alert(player2+" is the winner");
+          document.location.reload(); //to reload everything
+          clearInterval(interval);
+        }
+      }
+
+      //Keys
+      var player1up=false,player2up=false;
+      var player1down=false,player2down=false;
+      document.addEventListener("keydown",keyDownHandler,false);
+      document.addEventListener("keyup",keyUpHandler,false);
+
+      function keyDownHandler(e){
+          if(e.key=="w")
+            player1up=true;
+          if(e.key=="s")
+            player1down=true;
+          if(e.key=="Up" || e.key=="ArrowUp")
+            player2up=true;
+          if(e.key=="Down" || e.key=="ArrowDown")
+            player2down=true;
+          if(e.key=="a")
+            rotate1Clock=true;
+          if(e.key=="d")
+            rotate1Anti=true;
+          if(e.key=="Left" || e.key=="ArrowLeft")
+            rotate2Clock=true;
+          if(e.key=="Right" || e.key=="ArrowRight")
+              rotate2Anti=true;
+      }
+
+      function keyUpHandler(e){
+          if(e.key=="w")
+            player1up=false;
+          if(e.key=="s")
+            player1down=false;
+          if(e.key=="Up" || e.key=="ArrowUp")
+            player2up=false;
+          if(e.key=="Down" || e.key=="ArrowDown")
+            player2down=false;
+          if(e.key=="a")
+              rotate1Clock=false;
+          if(e.key=="d")
+              rotate1Anti=false;
+          if(e.key=="Left" || e.key=="ArrowLeft")
+              rotate2Clock=false;
+          if(e.key=="Right" || e.key=="ArrowRight")
+              rotate2Anti=false;
+      }
+
+    </script>
+  </body>
+</html>
